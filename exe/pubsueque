@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby -W 0
+
+require './config/environment' if File.exist?('./config/environment.rb')
+require 'pubsueque'
+
+Pubsueque::Launcher.new(Pubsueque.options).run
