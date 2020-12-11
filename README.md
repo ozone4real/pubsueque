@@ -101,7 +101,7 @@ Default options:
 {
     concurrency: 4 # number of threads that each pub/sub subscription would listen for and process published messages(jobs). 
     labels: {} # pub/sub labels,
-    queues: %w[default morgue], # represents pub/sub topics in which jobs would be published. They would be created when the server is booted (if they don't exist)
+    queues: %w[default morgue], # represents pub/sub topics in which jobs would be published to. They would be created when the server is booted (if they don't exist)
     deadline: 20, # Google pub/sub ack deadline
     retry_interval: 300 # failed jobs should be retried 5 minutes apart as mentioned in the requirements
   }
