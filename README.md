@@ -99,7 +99,7 @@ Default options:
 
 ```ruby
 {
-    concurrency: 4 # number of threads that each pub/sub subscription would listen for and process published messages(jobs). It is best to keep this not-too-high, so as to work well with ActiveRecord's connection pool (which has a default size of 5).
+    concurrency: 4 # number of threads that each pub/sub subscription would listen for and process received messages(jobs). It is best to keep this not-too-high, so as to work well with ActiveRecord's connection pool (which has a default size of 5).
     labels: {} # pub/sub labels,
     queues: %w[default morgue], # represents pub/sub topics in which jobs would be published to. They would be created when the server is booted (if they don't exist)
     deadline: 20, # Google pub/sub ack deadline
