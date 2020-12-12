@@ -29,6 +29,12 @@ module Pubsueque
       retry_job e
     end
 
+    def self.process(message, retry_processor, options)
+      new(message, retry_processor, options).process
+    end
+
+    private
+
     def run_job
       Pubsueque.reloader.call do
         Object.const_get(@klass)&.new.perform(@attributes)

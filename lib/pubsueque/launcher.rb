@@ -27,7 +27,12 @@ module Pubsueque
       (@queues - ['morgue']).map do |q|
         subscription = Pubsueque.client.subscription "#{q}-subscription"
         subscription.listen(subscription_options) do |message|
-          Processor.new(message, @retry_processor, @options).process
+          if time = message['at']
+            processor = Processor.new(message, @retry_processor, @options)
+            Scheduler.schedule(processor, time)
+          else
+            Processor.process(message, @retry_processor, @options)
+          end
         end
       end
     end

@@ -12,7 +12,11 @@ module Pubsueque
       def arguments; end
 
       def execute(*args)
-        Publisher.publish({ 'job_class' => to_s, 'class' => to_s, 'arguments' => args })
+        Publisher.publish(
+          DEFAULT_WORKER_OPTIONS.merge(
+            'job_class' => to_s, 'class' => to_s, 'arguments' => args
+          )
+        )
       end
 
       def execute_at(time, **opts); end

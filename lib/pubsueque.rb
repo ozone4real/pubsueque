@@ -7,7 +7,6 @@ require 'pubsueque/worker'
 require 'pubsueque/publisher'
 require 'pubsueque/failed_jobs_consumer'
 
-
 module Pubsueque
   DEFAULT_WORKER_OPTIONS = {
     retries: 2, # failed jobs should be retried twice as mentioned in the requirements
@@ -15,9 +14,9 @@ module Pubsueque
   }.freeze
 
   DEFAULT_OPTIONS = {
-    concurrency: 2,
+    concurrency: 4,
     labels: {},
-    queues: %w[default morgue mailers],
+    queues: %w[default morgue],
     deadline: 20,
     retry_interval: 300 # failed jobs should be retried 5 minutes apart as mentioned in the requirements
   }.freeze
@@ -50,7 +49,7 @@ module Pubsueque
     def options
       @options ||= DEFAULT_OPTIONS.dup
     end
-    
+
     # Enables configuration in a config initializer file (config/initializers/pubsueque.rb in Rails).
     # You would be able to configure the pubsueque server and overwrite defaults like this:
     #   Pubsueque.configure do |config|
@@ -64,11 +63,12 @@ module Pubsueque
 
     # See line 89 -90
     def reloader
-      @reloader ||= proc {|&blk| blk.call }
+      @reloader ||= proc { |&blk| blk.call }
     end
 
     def reloader=(reloader)
-      raise ArgumentError.new("reloader must respond to 'call'") unless reloader.respond_to? :call
+      raise ArgumentError, "reloader must respond to 'call'" unless reloader.respond_to? :call
+
       @reloader = reloader
     end
   end
@@ -117,4 +117,3 @@ if rails?
     end
   end
 end
-

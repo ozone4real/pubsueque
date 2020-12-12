@@ -20,4 +20,3 @@ module ActiveJob
     end
   end
 end
-
