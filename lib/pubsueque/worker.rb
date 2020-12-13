@@ -9,8 +9,6 @@ module Pubsueque
     end
 
     module ClassMethods
-      def arguments; end
-
       def execute(*args)
         Publisher.publish(
           DEFAULT_WORKER_OPTIONS.merge(

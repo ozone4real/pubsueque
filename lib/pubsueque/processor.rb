@@ -2,12 +2,13 @@ require 'benchmark'
 require 'json'
 module Pubsueque
   class Processor
-    def initialize(message, retry_processor, options)
+    def initialize(message, retry_processor, stats, options)
       @message = message
       @retry_count = @message.attributes['retries'].to_i
       @retry_processor = retry_processor
       @options = options
       @retry_interval = options[:retry_interval]
+      @stats = stats
     end
 
     def process
@@ -24,18 +25,22 @@ module Pubsueque
 
       run_job
       @message.acknowledge!
+      @stats.incr(:pass_count)
+
       Logger.log "Completed job #{@job_class} at #{Time.now}"
     rescue StandardError => e
+      @stats.incr(:fail_count)
       retry_job e
     end
 
-    def self.process(message, retry_processor, options)
-      new(message, retry_processor, options).process
+    def self.process(message, retry_processor, stats, options)
+      new(message, retry_processor, stats, options).process
     end
 
     private
 
     def run_job
+      @stats.incr(:jobs_count)
       Pubsueque.reloader.call do
         Object.const_get(@klass)&.new.perform(@attributes)
       end

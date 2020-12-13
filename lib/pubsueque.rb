@@ -6,6 +6,7 @@ require 'pubsueque/processor'
 require 'pubsueque/worker'
 require 'pubsueque/publisher'
 require 'pubsueque/failed_jobs_consumer'
+require 'pubsueque/stats'
 require 'pubsueque/scheduler'
 
 module Pubsueque

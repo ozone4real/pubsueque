@@ -1,8 +1,9 @@
 module Pubsueque
   class Launcher
     def initialize(options)
-      @queues = options[:queues]
+      @queues = options[:queues] | ["morgue"]
       @options = options
+      @stats = Stats.new
     end
 
     def run
@@ -11,11 +12,17 @@ module Pubsueque
       create_subscriptions
       @retry_processor = FailedJobsConsumer.new(@options).tap(&:init)
       subscribers = init_subscribers
+      Logger.log "Listening for messages..."
       subscribers.each(&:start)
 
       at_exit do
-        Logger.log 'Waiting for jobs to complete processing, would shut down in a moment......'
+        Logger.log 'Waiting for jobs to complete processing, would shut down in a moment...'
         subscribers.each { |sub| sub.stop!(10) }
+        Logger.log <<-STATS
+          Total jobs ran: #{@stats.jobs_count}
+          Total jobs passed: #{@stats.pass_count}
+          Total jobs failed including retries: #{@stats.fail_count} 
+         STATS
         Logger.log 'Exited!!!!!'
       end
       sleep
@@ -28,12 +35,12 @@ module Pubsueque
         subscription = Pubsueque.client.subscription "#{q}-subscription"
         subscription.listen(subscription_options) do |message|
           if schedule?(message)
-            processor = Processor.new(message, @retry_processor, @options)
+            processor = Processor.new(message, @retry_processor, @stats, @options)
             deadline_extension = schedule_in(message) + 5
             message.modify_ack_deadline!(deadline_extension )
             Scheduler.schedule(processor, schedule_in(message))
           else
-            Processor.process(message, @retry_processor, @options)
+            Processor.process(message, @retry_processor, @stats, @options)
           end
         end
       end
