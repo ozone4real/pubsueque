@@ -14,12 +14,11 @@ module Pubsueque
     def process
       @attributes = @message.attributes
       retries = @attributes['retries'].to_i
-      executions = @attributes['executions']&.to_i
-      executions += 1 if executions
+      @executions ||= (@attributes['executions']&.to_i || 0)
       @klass = @attributes['class']
       @job_class = @attributes['job_class']
       @attributes.merge!(
-        'retries' => retries, 'executions' => executions,
+        'retries' => retries, 'executions' => @executions,
         'arguments' => JSON.parse(@attributes['arguments']),
         'job_id' => @message.message_id
       )
@@ -52,6 +51,7 @@ module Pubsueque
         deadline_extension = @retry_interval + @options[:deadline] + 5
         @message.modify_ack_deadline!(deadline_extension)
         @retry_count -= 1
+        @executions += 1
         Logger.log "#{failure_message error} Job scheduled for a retry in #{@retry_interval}s. Number of retries left = #{@retry_count}"
         @retry_processor << self
       else
