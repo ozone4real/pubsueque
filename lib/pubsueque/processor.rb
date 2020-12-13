@@ -15,6 +15,7 @@ module Pubsueque
       @attributes = @message.attributes
       retries = @attributes['retries'].to_i
       executions = @attributes['executions']&.to_i
+      executions += 1 if executions
       @klass = @attributes['class']
       @job_class = @attributes['job_class']
       @attributes.merge!(
