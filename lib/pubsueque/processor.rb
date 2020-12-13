@@ -46,7 +46,7 @@ module Pubsueque
         deadline_extension = @retry_interval + @options[:deadline] + 5
         @message.modify_ack_deadline!(deadline_extension)
         @retry_count -= 1
-        Logger.log "#{failure_message error}. Job scheduled for a retry in #{@retry_interval}s. Number of retries left = #{@retry_count}"
+        Logger.log "#{failure_message error} Job scheduled for a retry in #{@retry_interval}s. Number of retries left = #{@retry_count}"
         @retry_processor << self
       else
         Logger.log "#{failure_message error}. Retries exhausted. Enqueuing to morgue queue"
@@ -54,11 +54,11 @@ module Pubsueque
         @message.acknowledge!
       end
     rescue StandardError => e
-      Logger.log(e.full_message)
+      Logger.log(e.exception)
     end
 
     def failure_message(error)
-      "Job #{@job_class} failed with error #{error.full_message}."
+      "Job #{@job_class} failed with error #{error.exception}."
     end
 
     def job_name

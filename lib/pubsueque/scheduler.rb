@@ -13,7 +13,7 @@ module Pubsueque
     end
 
     def self.schedule(processor, time)
-      new(processor, time)
+      new(processor, time).schedule
     end
   end
 end

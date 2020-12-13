@@ -19,7 +19,13 @@ module Pubsueque
         )
       end
 
-      def execute_at(time, **opts); end
+      def execute_at(time, *args)
+        Publisher.publish(
+          DEFAULT_WORKER_OPTIONS.merge(
+            'job_class' => to_s, 'class' => to_s, 'arguments' => args, 'at' => time
+          )
+        )
+      end
     end
 
     module Options

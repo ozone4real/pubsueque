@@ -27,14 +27,24 @@ module Pubsueque
       (@queues - ['morgue']).map do |q|
         subscription = Pubsueque.client.subscription "#{q}-subscription"
         subscription.listen(subscription_options) do |message|
-          if time = message['at']
+          if schedule?(message)
             processor = Processor.new(message, @retry_processor, @options)
-            Scheduler.schedule(processor, time)
+            deadline_extension = schedule_in(message) + 5
+            message.modify_ack_deadline!(deadline_extension )
+            Scheduler.schedule(processor, schedule_in(message))
           else
             Processor.process(message, @retry_processor, @options)
           end
         end
       end
+    end
+
+    def schedule_in(message)
+      (message.published_at + message.attributes['at'].to_f) - (Time.now + 0.1)
+    end
+
+    def schedule?(message)
+      message.attributes['at'] && schedule_in(message).positive?
     end
 
     def create_subscriptions
