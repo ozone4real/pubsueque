@@ -1,6 +1,6 @@
 # Pubsueque
 
-ActiveJob (Rails) compatible job queuing library that enqueues jobs to Google Pub/Sub and executes them immediately or at a specified time. Think Sidekiq/Resque/Delayed but with a Google Pub/Sub backend. It can be used with and without Rails or ActiveJob.
+ActiveJob (Rails) compatible job queuing library that enqueues jobs to Google Pub/Sub and executes them immediately or at a specified time. Think Sidekiq/Resque/Delayed but with a Google Pub/Sub backend.
 
 ## Requirement
 Ruby >=2.5

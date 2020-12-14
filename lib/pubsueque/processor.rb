@@ -27,7 +27,7 @@ module Pubsueque
       @message.acknowledge!
       @stats.incr(:pass_count)
 
-      Logger.log "Completed job #{job_name} at #{Time.now}"
+      Logger.log "Completed #{job_name} at #{Time.now}. Took #{@time_took}s"
     rescue StandardError => e
       @stats.incr(:fail_count)
       retry_job e
@@ -40,10 +40,12 @@ module Pubsueque
     private
 
     def run_job
-      @stats.incr(:jobs_count)
-      Pubsueque.reloader.call do
-        Object.const_get(@klass)&.new.perform(@attributes)
-      end
+      @stats.incr(:jobs_count) unless @executions > 1
+      @time_took = Benchmark.realtime do
+        Pubsueque.reloader.call do
+          Object.const_get(@klass)&.new.perform(@attributes)
+        end
+      end.round(2)
     end
 
     def retry_job(error)
