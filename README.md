@@ -110,7 +110,7 @@ Default options:
   }
 ```
 
-You can configure/overwrite these defaults by setting up a pubsueque config file as an initializer like: `config/initializer/pubsueque.rb`. You can configure like this:
+You can configure/overwrite these defaults by setting up a pubsueque config file as an initializer like: `config/initializer/pubsueque.rb` and then configure like this:
 
 ```ruby
     Pubsueque.configure do |config|
