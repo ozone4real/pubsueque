@@ -70,7 +70,7 @@ With that ActiveJob would use the pubsueque adapter to enqueue jobs to Google pu
         end
     end
     
-    StupidJob.enqueue(args) # enqueue the job to pub/sub and execute in the background immediately
+    StupidJob.enqueue(args) # enqueue the job to pub/sub and execute in the background immediately (after the pub/sub subscriber receives the job).
     StupidJob.enqueue_at(10.mins, args) # enqueue the job to pub/sub and execute in 10 minutes.
 ```
 
@@ -110,7 +110,7 @@ Default options:
   }
 ```
 
-You can configure/overwrite these defaults by setting up a pubsueque config file as an initializer like: `config/initializer/pubsueque.rb`. In the file you can do:
+You can configure/overwrite these defaults by setting up a pubsueque config file as an initializer like: `config/initializer/pubsueque.rb`. You can configure like this:
 
 ```ruby
     Pubsueque.configure do |config|
