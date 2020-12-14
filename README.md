@@ -46,16 +46,16 @@ Configure ActiveJob to use the pubsueque queue adapter as its adapter. In your R
 ```ruby
     config.active_job.queue_adapter = :pubsueque
 ```
-With that, any job you queue with ActiveJob would use the pubsueque adapter to enqueue jobs to Google pub/sub and execute them immediately or at a specified time.
+With that ActiveJob would use the pubsueque adapter to enqueue jobs to Google pub/sub and execute them immediately or at a specified time.
 
 ```ruby
     class StupidJob < ActiveJob::Base
-        def perform(*args)
+        def perform(args)
             // job
         end
     end
     
-    StupidJob.perform_later(args) # enqueue the job to pub/sub and execute in the background immediately.
+    StupidJob.perform_later(args) # enqueue the job to pub/sub and execute in the background immediately (after the pub/sub subscriber receives the job).
     StupidJob.set(wait_until: 10.minutes).perform_later(args) # enqueue the job to pub/sub and execute in 10 minutes.
 ```
 
