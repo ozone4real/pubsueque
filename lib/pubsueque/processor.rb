@@ -27,7 +27,7 @@ module Pubsueque
       @message.acknowledge!
       @stats.incr(:pass_count)
 
-      Logger.log "Completed job #{@job_class} at #{Time.now}"
+      Logger.log "Completed job #{job_name} at #{Time.now}"
     rescue StandardError => e
       @stats.incr(:fail_count)
       retry_job e
@@ -64,7 +64,7 @@ module Pubsueque
     end
 
     def failure_message(error)
-      "Job #{@job_class} failed with error #{error.exception}."
+      "Job #{job_name} failed with error #{error.exception}."
     end
 
     def job_name
