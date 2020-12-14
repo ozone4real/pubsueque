@@ -76,7 +76,7 @@ With that ActiveJob would use the pubsueque adapter to enqueue jobs to Google pu
 
 ## Job level configurations
 
-You can use active job's configuration methods to set options for a specific job. Alternatively, you can use the `pubsueque_options` writer to set options for the job. This would merge with/override jobs set with ActiveJob methods.
+You can use active job's configuration writers to set options for a specific job. Alternatively, you can use the `pubsueque_options` writer to set options for the job. This would merge with/override options set with ActiveJob.
 
 
 ```ruby
