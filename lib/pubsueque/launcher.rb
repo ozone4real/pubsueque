@@ -36,8 +36,8 @@ module Pubsueque
         subscription.listen(subscription_options) do |message|
           if schedule?(message)
             processor = Processor.new(message, @retry_processor, @stats, @options)
-            deadline_extension = schedule_in(message) + 5
-            message.modify_ack_deadline!(deadline_extension )
+            deadline_extension = schedule_in(message).ceil + 5
+            message.modify_ack_deadline!(deadline_extension)
             Scheduler.schedule(processor, schedule_in(message))
           else
             Processor.process(message, @retry_processor, @stats, @options)
