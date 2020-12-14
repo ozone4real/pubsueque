@@ -41,7 +41,7 @@ It needs a config/environment.rb file to be present relative to the working dire
 
 ## ActiveJob
 
-Configure ActiveJob to use the pubsueque queue adapter as its adapter. In your Rails configuration file:
+Configure ActiveJob to use the pubsueque queue adapter. In your Rails configuration file:
 
 ```ruby
     config.active_job.queue_adapter = :pubsueque
@@ -76,7 +76,8 @@ With that ActiveJob would use the pubsueque adapter to enqueue jobs to Google pu
 
 ## Job level configurations
 
-You can use active job's configuration writers to set options for a specific job. Alternatively, you can use the `pubsueque_options` writer to set options for the job. This would merge with/override options set with ActiveJob.
+You can use active job's configuration writers to set options for a specific job. Alternatively, you can use the `pubsueque_options` writer which allows you to set more
+ options for the job. This would merge with/override options set with ActiveJob.
 
 
 ```ruby
