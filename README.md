@@ -41,21 +41,21 @@ It needs a config/environment.rb file to be present relative to the working dire
 
 ## ActiveJob
 
-Configure ActiveJob to use the pubsueque queue adapter as its adapter. In your Rails configuration file:
+Configure ActiveJob to use the pubsueque queue adapter. In your Rails configuration file:
 
 ```ruby
     config.active_job.queue_adapter = :pubsueque
 ```
-With that, any job you queue with ActiveJob would use the pubsueque adapter to enqueue jobs to Google pub/sub and execute them immediately or at a specified time.
+With that ActiveJob would use the pubsueque adapter to enqueue jobs to Google pub/sub and execute them immediately or at a specified time.
 
 ```ruby
     class StupidJob < ActiveJob::Base
-        def perform(*args)
+        def perform(args)
             // job
         end
     end
     
-    StupidJob.perform_later(args) # enqueue the job to pub/sub and execute in the background immediately.
+    StupidJob.perform_later(args) # enqueue the job to pub/sub and execute in the background immediately (after the pub/sub subscriber receives the job).
     StupidJob.set(wait_until: 10.minutes).perform_later(args) # enqueue the job to pub/sub and execute in 10 minutes.
 ```
 
@@ -70,13 +70,14 @@ With that, any job you queue with ActiveJob would use the pubsueque adapter to e
         end
     end
     
-    StupidJob.enqueue(args) # enqueue the job to pub/sub and execute in the background immediately
+    StupidJob.enqueue(args) # enqueue the job to pub/sub and execute in the background immediately (after the pub/sub subscriber receives the job).
     StupidJob.enqueue_at(10.mins, args) # enqueue the job to pub/sub and execute in 10 minutes.
 ```
 
 ## Job level configurations
 
-You can use active job's configuration methods to set options for a specific job. Alternatively, you can use the `pubsueque_options` writer to set options for the job. This would merge with/override jobs set with ActiveJob methods.
+You can use active job's configuration writers to set options for a specific job. Alternatively, you can use the `pubsueque_options` writer which allows you to set more
+ options for the job. This would merge with/override options set with ActiveJob.
 
 
 ```ruby
@@ -110,7 +111,7 @@ Default options:
   }
 ```
 
-You can configure/overwrite these defaults by setting up a pubsueque config file as an initializer like: `config/initializer/pubsueque.rb`. In the file you can do:
+You can configure/overwrite these defaults by setting up a pubsueque config file as an initializer like: `config/initializer/pubsueque.rb` and then configure like this:
 
 ```ruby
     Pubsueque.configure do |config|

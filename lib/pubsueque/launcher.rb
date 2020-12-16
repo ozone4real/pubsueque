@@ -20,7 +20,7 @@ module Pubsueque
         subscribers.each { |sub| sub.stop!(10) }
         Logger.log <<-STATS
           Total jobs ran: #{@stats.jobs_count}
-          Total successful jobs: #{@stats.pass_count}
+          Total successful jobs: #{@stats.success_count}
           Total jobs failed including retries: #{@stats.fail_count} 
          STATS
         Logger.log 'Exited!!!!!'

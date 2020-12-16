@@ -5,7 +5,7 @@ module Pubsueque
     def initialize
       @jobs_count = 0
       @fail_count = 0
-      @pass_count = 0
+      @success_count = 0
 
       @semaphore = Mutex.new
     end
