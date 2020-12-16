@@ -11,24 +11,29 @@ module Pubsueque
       create_topics
       create_subscriptions
       @retry_processor = FailedJobsConsumer.new(@options).tap(&:init)
-      subscribers = init_subscribers
+      @subscribers = init_subscribers
       Logger.log "Listening for messages..."
-      subscribers.each(&:start)
+      @subscribers.each(&:start)
 
-      at_exit do
-        Logger.log 'Waiting for jobs to complete processing, would shut down in a moment...'
-        subscribers.each { |sub| sub.stop!(10) }
-        Logger.log <<-STATS
-          Total jobs ran: #{@stats.jobs_count}
-          Total successful jobs: #{@stats.success_count}
-          Total jobs failed including retries: #{@stats.fail_count} 
-         STATS
-        Logger.log 'Exited!!!!!'
-      end
+      trap("INT") { handle_signals }
+      trap("TERM") { handle_signals }
+
       sleep
     end
 
     private
+
+    def handle_signals
+      Logger.log 'Waiting for jobs to complete processing, would shut down in a moment...'
+      @subscribers.each { |sub| sub.stop!(10) }
+      Logger.log <<-STATS
+        Total jobs ran: #{@stats.jobs_count}
+        Total successful jobs: #{@stats.success_count}
+        Total jobs failed including retries: #{@stats.fail_count} 
+        STATS
+      Logger.log 'Exited!!!!!'
+      raise SignalException, "INT"
+    end
 
     def init_subscribers
       (@queues - ['morgue']).map do |q|
