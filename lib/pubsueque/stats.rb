@@ -1,6 +1,6 @@
 module Pubsueque
   class Stats
-    attr_accessor :jobs_count, :fail_count, :pass_count
+    attr_accessor :jobs_count, :fail_count, :success_count
 
     def initialize
       @jobs_count = 0
