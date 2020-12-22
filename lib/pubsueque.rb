@@ -68,6 +68,7 @@ module Pubsueque
       @reloader ||= proc { |&blk| blk.call }
     end
 
+    # What does this solve, why aren't the accessors available otherwise?
     def reloader=(reloader)
       raise ArgumentError, "reloader must respond to 'call'" unless reloader.respond_to? :call
 
@@ -83,6 +84,8 @@ def rails?
 end
 
 if rails?
+  # Is this how other gems insert themselves?
+  # Can we wait until `Rails` is defined?
   require 'rails'
   require 'active_job/queue_adapters/pubsueque_adapter.rb'
 

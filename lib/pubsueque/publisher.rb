@@ -27,6 +27,8 @@ module Pubsueque
     private
 
     def prepare_attributes(options)
+      # Is there another way to do this? Feels like something that would be
+      # hard to remember later on.
       Pubsueque.reloader.call do
         concrete_opts = Object.const_get(options['job_class']).pubsueque_worker_options || {}
         base_opts = Object.const_get(options['class']).pubsueque_worker_options || {}

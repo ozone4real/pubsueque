@@ -1,3 +1,4 @@
+# Empty
 module Pubsueque
   module Utils
   end

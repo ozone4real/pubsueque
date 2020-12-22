@@ -45,6 +45,12 @@ module Pubsueque
         subscription.listen(subscription_options) do |message|
           if schedule?(message)
             processor = Processor.new(message, @retry_processor, @stats, @options)
+            # We do this elsewhere as well, extending deadlines.
+            # (processor#retry_job)
+            # Can it be centralized?
+            # Why do we need the `Scheduler`?
+            # We could just give the message back to GCP until it's ready to
+            # be processed.
             deadline_extension = schedule_in(message).ceil + 5
             message.modify_ack_deadline!(deadline_extension)
             Scheduler.schedule(processor, schedule_in(message))

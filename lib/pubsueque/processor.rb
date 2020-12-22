@@ -50,11 +50,14 @@ module Pubsueque
 
     def retry_job(error)
       if @retry_count > 0
+        # Magic number 5 - I guess it's to avoid some boundary flipping
+        # if the job takes exactly retry interval + deadline?
         deadline_extension = @retry_interval + @options[:deadline] + 5
         @message.modify_ack_deadline!(deadline_extension)
         @retry_count -= 1
         @executions += 1
         Logger.log "#{failure_message error} Job scheduled for a retry in #{@retry_interval}s. Number of retries left = #{@retry_count}"
+        # Out of curiosity, why don't we release it back to the topic for later processing?
         @retry_processor << self
       else
         Logger.log "#{failure_message error}. Retries exhausted. Enqueuing to morgue queue"
