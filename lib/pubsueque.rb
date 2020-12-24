@@ -83,9 +83,7 @@ def rails?
 end
 
 if rails?
-  require 'rails'
   require 'active_job/queue_adapters/pubsueque_adapter.rb'
-
   module Pubsueque
     # Inspired by Sidekiq. Making the pubsueque worker accessors available to AJ classes
     class Rails < ::Rails::Engine
@@ -96,7 +94,7 @@ if rails?
       end
 
       # Inspired by Sidekiq. From Rails 5, Rails application code should be wrapped in a reloader
-      # to avoid circular dependency and other issues from Rails autoloading.
+      # to trigger autoloading.
       class Reloader
         def initialize(app = ::Rails.application)
           @app = app
