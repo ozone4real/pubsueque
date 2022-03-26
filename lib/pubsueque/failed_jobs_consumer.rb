@@ -14,7 +14,7 @@ module Pubsueque
     def init
       Thread.new do
         loop do
-          processor = @queue.pop
+          processor = @queue.shift
           Scheduler.schedule(processor, @options[:retry_interval])
         end
       end
