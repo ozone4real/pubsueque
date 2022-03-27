@@ -33,7 +33,7 @@ module Pubsueque
 
   class << self
     def client
-      @client ||= Google::Cloud::Pubsub.new
+      @client ||= Google::Cloud::Pubsub.new(project_id: "okrrr")
     end
 
     def topics
