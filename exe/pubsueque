@@ -1,4 +1,4 @@
-#!/usr/bin/env -S ruby -W 0
+#!/usr/bin/env ruby
 
 require './config/environment' if File.exist?('./config/environment.rb')
 require 'pubsueque'
