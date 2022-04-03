@@ -7,10 +7,6 @@ module Pubsueque
     end
 
     def run
-      trap("INT") { handle_signal("INT") }
-      trap("TERM") { handle_signal("TERM") }
-      at_exit { cleanup }
-
       Logger.log 'Starting Pubsueque process...'
       create_topics
       create_subscriptions
@@ -20,16 +16,14 @@ module Pubsueque
       @subscribers.each(&:start)
 
       sleep
+    rescue SignalException => e
+      cleanup!
     end
 
     private
 
-    def handle_signal(sig)
+    def cleanup!
       Logger.log 'Waiting for jobs to complete processing, would shut down in a moment...'
-      raise SignalException, sig
-    end
-
-    def cleanup
       @subscribers.each { |sub| sub.stop!(10) }
       Logger.log <<~STATS
         Total jobs ran: #{@stats.jobs_count}
