@@ -36,7 +36,7 @@ module Pubsueque
     def init_subscribers
       (@queues - ['morgue']).map do |q|
         subscription = Pubsueque.client.subscription "#{q}-subscription"
-        subscription.listen(subscription_options) do |message|
+        subscription.listen(**subscription_options) do |message|
           if schedule?(message)
             processor = Processor.new(message, @retry_processor, @stats, @options)
             deadline_extension = schedule_in(message).ceil + 5
@@ -58,29 +58,15 @@ module Pubsueque
     end
 
     def create_subscriptions
-      @queues.map do |name|
+      (@queues - ["morgue"]).map do |name|
         sub = "#{name}-subscription"
-        Thread.new do
-          begin
-            Pubsueque.topics[name].subscribe sub
-            Logger.log "Subscription #{sub} successfully created"
-          rescue Google::Cloud::AlreadyExistsError
-            Logger.log "Subscription #{sub} already exists"
-          end
-        end
+        Thread.new { Pubsueque.topics[name].subscription(sub) || Pubsueque.topics[name].subscribe(sub) }
       end.each(&:join)
     end
 
     def create_topics
       @queues.map do |topic|
-        Thread.new do
-          begin
-            Pubsueque.client.create_topic topic, topic_options
-            Logger.log "Topic #{topic} successfully created"
-          rescue Google::Cloud::AlreadyExistsError => e
-            Logger.log "Topic #{topic} already exists"
-          end
-        end
+        Thread.new { Pubsueque.client.topic(topic) || Pubsueque.client.create_topic(topic, **topic_options) }
       end.each(&:join)
     end
 
